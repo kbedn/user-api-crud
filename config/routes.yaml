@@ -1,3 +1,13 @@
 app_logout:
   path: /logout
   methods: GET
+
+api_login_check:
+  path: /api/login_check
+
+homepage:
+  path: /
+  controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController::urlRedirectAction
+  defaults:
+    path: /login
+    permanent: true
