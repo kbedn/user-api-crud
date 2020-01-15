@@ -1,5 +1,0 @@
-\src\Entity\User:
-  # 5 users
-  user{1..5}:
-    username: <username()>
-    password: <password()>

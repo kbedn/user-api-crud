@@ -14,10 +14,13 @@ security:
             security: false
         main:
             anonymous: ~
-            logout: ~
+            logout:
+                path: app_logout
+                target: homepage
             guard:
                 authenticators:
-                    - App\Security\LoginFormAuthenticator
+                    - App\Security\LoginAuthenticator
+                entry_point: App\Security\LoginAuthenticator
             # http_basic: true
             # https://symfony.com/doc/current/security.html#a-configuring-how-your-users-will-authenticate
 
@@ -25,5 +28,6 @@ security:
             # https://symfony.com/doc/current/security/form_login_setup.html
 
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/user, roles: ROLE_USER }

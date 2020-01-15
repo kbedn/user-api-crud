@@ -43,7 +43,9 @@ class UserProvider implements UserProviderInterface
     public function refreshUser(SecurityUserInterface $user)
     {
         if (!$this->supportsClass(get_class($user))) {
-            throw new UnsupportedUserException(sprintf('Expected an instance of %s, but got "%s".', User::class, get_class($user)));
+            throw new UnsupportedUserException(
+                sprintf('Expected an instance of %s, but got "%s".', User::class, get_class($user))
+            );
         }
 
         if (null === $reloadedUser = $this->userRepository->findBy(['id' => $user->getId()])) {
@@ -58,7 +60,7 @@ class UserProvider implements UserProviderInterface
      */
     public function supportsClass($class): bool
     {
-        return  User::class === $class;
+        return User::class === $class;
     }
 
     /**

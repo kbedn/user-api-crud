@@ -7,7 +7,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  */
-class User implements UserInterface
+class User implements UserInterface, \JsonSerializable
 {
     /**
      * @ORM\Id()
@@ -24,9 +24,8 @@ class User implements UserInterface
     private $username;
 
     /**
-     * @var string
-     * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank()
+     * @var string The hashed password
+     * @ORM\Column(type="string")
      */
     private $password;
 
@@ -38,24 +37,32 @@ class User implements UserInterface
     /**
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return (string) $this->getUsername();
     }
 
     /**
-     * @return mixed
+     * @return int|null
      */
-    public function getUsername()
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUsername(): ?string
     {
         return $this->username;
     }
 
     /**
-     * @param mixed $username
-     * @return User
+     * @param string $username
+     * @return $this
      */
-    public function setUsername($username): User
+    public function setUsername(string $username): self
     {
         $this->username = $username;
 
@@ -63,9 +70,9 @@ class User implements UserInterface
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getPassword(): string
+    public function getPassword(): ?string
     {
         return $this->password;
     }
@@ -74,7 +81,7 @@ class User implements UserInterface
      * @param string $password
      * @return User
      */
-    public function setPassword(string $password): User
+    public function setPassword(string $password): self
     {
         $this->password = $password;
 
@@ -82,11 +89,11 @@ class User implements UserInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getRoles(): array
     {
-       return $this->roles;
+       return ['ROLE_USER'];
     }
 
     /**
@@ -97,10 +104,21 @@ class User implements UserInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function eraseCredentials(): void
     {
         $this->password = null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function jsonSerialize(): array
+    {
+        return [
+            'username' => $this->getUsername(),
+            'id' => $this->getId()
+        ];
     }
 }
