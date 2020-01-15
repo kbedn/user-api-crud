@@ -1,13 +1,17 @@
-<?php namespace App\Entity;
+<?php
+
+namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
+ * @UniqueEntity("email")
  */
-class User implements UserInterface
+class User implements UserInterface, \JsonSerializable
 {
     /**
      * @ORM\Id()
@@ -17,18 +21,10 @@ class User implements UserInterface
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255, unique=true)
-     * @Assert\NotBlank()
-     * @Assert\Length(min="3")
+     * @ORM\Column(type="string", length=180, unique=true)
+     * @Assert\Email
      */
-    private $username;
-
-    /**
-     * @var string
-     * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank()
-     */
-    private $password;
+    private $email;
 
     /**
      * @ORM\Column(type="json")
@@ -36,45 +32,65 @@ class User implements UserInterface
     private $roles = [];
 
     /**
-     * @return string
+     * @var string The hashed password
+     * @ORM\Column(type="string")
      */
-    public function __toString()
+    private $password;
+
+    public function getId(): ?int
     {
-        return (string) $this->getUsername();
+        return $this->id;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getUsername()
+    public function getEmail(): ?string
     {
-        return $this->username;
+        return $this->email;
     }
 
-    /**
-     * @param mixed $username
-     * @return User
-     */
-    public function setUsername($username): User
+    public function setEmail(string $email): self
     {
-        $this->username = $username;
+        $this->email = $email;
 
         return $this;
     }
 
     /**
-     * @return string
+     * A visual identifier that represents this user.
+     *
+     * @see UserInterface
      */
-    public function getPassword(): string
+    public function getUsername(): string
     {
-        return $this->password;
+        return (string) $this->email;
     }
 
     /**
-     * @param string $password
-     * @return User
+     * @see UserInterface
      */
-    public function setPassword(string $password): User
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
+    }
+
+    public function setRoles(array $roles): self
+    {
+        $this->roles = $roles;
+
+        return $this;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function getPassword(): string
+    {
+        return (string) $this->password;
+    }
+
+    public function setPassword(string $password): self
     {
         $this->password = $password;
 
@@ -82,25 +98,30 @@ class User implements UserInterface
     }
 
     /**
-     * @inheritDoc
-     */
-    public function getRoles(): array
-    {
-       return $this->roles;
-    }
-
-    /**
-     * not needed when using the "bcrypt" algorithm in security.yaml
+     * @see UserInterface
      */
     public function getSalt()
     {
+        // not needed when using the "bcrypt" algorithm in security.yaml
     }
 
     /**
-     * @inheritDoc
+     * @see UserInterface
      */
-    public function eraseCredentials(): void
+    public function eraseCredentials()
     {
-        $this->password = null;
+        // If you store any temporary, sensitive data on the user, clear it here
+        // $this->plainPassword = null;
+    }
+
+    /**
+     */
+    public function jsonSerialize()
+    {
+        return [
+            'email' => $this->getUsername(),
+            'password' => $this->getPassword(),
+            'roles' => $this->getRoles(),
+        ];
     }
 }

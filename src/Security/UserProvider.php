@@ -2,20 +2,18 @@
 
 use App\Entity\User;
 use App\Repository\UserRepository;
-use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
-use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
-use Symfony\Component\Security\Core\User\UserInterface as SecurityUserInterface;
-use Symfony\Component\Security\Core\User\UserProviderInterface;
+use Symfony\Component\Security\Core\{Exception\UnsupportedUserException,
+    Exception\UsernameNotFoundException,
+    User\UserInterface,
+    User\UserProviderInterface
+};
 
 class UserProvider implements UserProviderInterface
 {
-    /**
-     * @var UserRepository
-     */
-    protected $userRepository;
+    /** @var UserRepository */
+    public $userRepository;
 
     /**
-     * Constructor.
      * @param UserRepository $userRepository
      */
     public function __construct(UserRepository $userRepository)
@@ -26,7 +24,7 @@ class UserProvider implements UserProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function loadUserByUsername($username)
+    public function loadUserByUsername($username): UserInterface
     {
         $user = $this->findUser($username);
 
@@ -40,13 +38,15 @@ class UserProvider implements UserProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function refreshUser(SecurityUserInterface $user)
+    public function refreshUser(UserInterface $user): UserInterface
     {
         if (!$this->supportsClass(get_class($user))) {
-            throw new UnsupportedUserException(sprintf('Expected an instance of %s, but got "%s".', User::class, get_class($user)));
+            throw new UnsupportedUserException(
+                sprintf('Expected an instance of %s, but got "%s".', User::class, get_class($user))
+            );
         }
 
-        if (null === $reloadedUser = $this->userRepository->findBy(['id' => $user->getId()])) {
+        if (null === $reloadedUser = $this->userRepository->findOneBy(['id' => $user->getId()])) {
             throw new UsernameNotFoundException(sprintf('User with ID "%s" could not be reloaded.', $user->getId()));
         }
 
@@ -58,16 +58,11 @@ class UserProvider implements UserProviderInterface
      */
     public function supportsClass($class): bool
     {
-        return  User::class === $class;
+        return User::class === $class;
     }
 
     /**
-     * Finds a user by username.
-     *
-     * This method is meant to be an extension point for child classes.
-     *
      * @param string $username
-     *
      * @return User|null
      */
     protected function findUser($username): ?User
