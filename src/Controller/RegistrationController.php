@@ -2,7 +2,7 @@
 
 use App\Entity\User;
 use App\Form\UserType;
-use App\Security\LoginAuthenticator;;
+use App\Security\LoginAuthenticator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;

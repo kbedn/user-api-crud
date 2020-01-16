@@ -6,6 +6,7 @@ use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -37,13 +38,13 @@ class LoginAuthenticator extends AbstractFormLoginAuthenticator implements Passw
         $this->passwordEncoder = $passwordEncoder;
     }
 
-    public function supports(Request $request)
+    public function supports(Request $request): bool
     {
         return 'login' === $request->attributes->get('_route')
             && $request->isMethod('POST');
     }
 
-    public function getCredentials(Request $request)
+    public function getCredentials(Request $request): array
     {
         $credentials = [
             'username' => $request->request->get('username'),
@@ -99,7 +100,7 @@ class LoginAuthenticator extends AbstractFormLoginAuthenticator implements Passw
      * @param Request $request
      * @param TokenInterface $token
      * @param string $providerKey
-     * @return RedirectResponse|\Symfony\Component\HttpFoundation\Response|null
+     * @return RedirectResponse|Response|null
      * @throws \Exception
      */
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
@@ -112,7 +113,7 @@ class LoginAuthenticator extends AbstractFormLoginAuthenticator implements Passw
         throw new \Exception('TODO: provide a valid redirect inside '.__FILE__);
     }
 
-    protected function getLoginUrl()
+    protected function getLoginUrl(): string
     {
         return $this->urlGenerator->generate('login');
     }

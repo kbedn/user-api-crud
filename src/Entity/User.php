@@ -1,6 +1,7 @@
 <?php namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use phpDocumentor\Reflection\Types\Null_;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -28,6 +29,12 @@ class User implements UserInterface, \JsonSerializable
      * @ORM\Column(type="string")
      */
     private $password;
+
+    /**
+     * @ORM\Column(type="string", length=45)
+     * @Assert\Email()
+     */
+    private $email;
 
     /**
      * @ORM\Column(type="json")
@@ -99,8 +106,9 @@ class User implements UserInterface, \JsonSerializable
     /**
      * not needed when using the "bcrypt" algorithm in security.yaml
      */
-    public function getSalt()
+    public function getSalt(): void
     {
+        return;
     }
 
     /**
@@ -112,12 +120,32 @@ class User implements UserInterface, \JsonSerializable
     }
 
     /**
+     * @return string|null
+     */
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    /**
+     * @param mixed $email
+     * @return User
+     */
+    public function setEmail(string $email): self
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    /**
      * @inheritDoc
      */
     public function jsonSerialize(): array
     {
         return [
             'username' => $this->getUsername(),
+            'email' => $this->getEmail(),
             'id' => $this->getId()
         ];
     }
