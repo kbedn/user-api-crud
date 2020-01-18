@@ -1,7 +1,6 @@
 <?php namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use phpDocumentor\Reflection\Types\Null_;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -39,7 +38,18 @@ class User implements UserInterface, \JsonSerializable
     /**
      * @ORM\Column(type="json")
      */
-    private $roles = [];
+    private $roles = ['ROLE_USER'];
+
+    /**
+     * User constructor.
+     * @param string|null $username
+     */
+    public function __construct($username = null)
+    {
+        if ($username) {
+            $this->username = $username;
+        }
+    }
 
     /**
      * @return string
@@ -139,6 +149,17 @@ class User implements UserInterface, \JsonSerializable
     }
 
     /**
+     * @param array $roles
+     * @return User
+     */
+    public function setRoles(array $roles): User
+    {
+        $this->roles = $roles;
+
+        return $this;
+    }
+
+    /**
      * @inheritDoc
      */
     public function jsonSerialize(): array
@@ -146,7 +167,8 @@ class User implements UserInterface, \JsonSerializable
         return [
             'username' => $this->getUsername(),
             'email' => $this->getEmail(),
-            'id' => $this->getId()
+            'id' => $this->getId(),
+            'password' => $this->getPassword()
         ];
     }
 }

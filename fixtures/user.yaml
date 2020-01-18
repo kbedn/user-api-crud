@@ -3,3 +3,4 @@ App\Entity\User:
         username (unique): '<username()>'
         email: '<email()>'
         password: '<password()>'
+        roles: ['ROLE_USER']

@@ -15,7 +15,7 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/api", name="user_api")
+ * @Route("/api", name="user_api_")
  */
 class UserApiController extends AbstractController
 {
@@ -24,7 +24,7 @@ class UserApiController extends AbstractController
      * @return JsonResponse
      * @Route("/users", name="users", methods={"GET"})
      */
-    public function getUsers(UserRepository $userRepository): JsonResponse
+    public function getApiUsers(UserRepository $userRepository): JsonResponse
     {
         $data = $userRepository->findAll();
         return $this->response($data);
@@ -37,7 +37,7 @@ class UserApiController extends AbstractController
      * @return JsonResponse
      * @Route("/users", name="users_add", methods={"POST"})
      */
-    public function addUser(
+    public function addApiUser(
         EntityManagerInterface $entityManager,
         Request $request,
         UserPasswordEncoderInterface $encoder
@@ -101,7 +101,7 @@ class UserApiController extends AbstractController
      * @return JsonResponse
      * @Route("/users/{id}", name="users_put", methods={"PUT"})
      */
-    public function updateUser(
+    public function updateApiUser(
         Request $request,
         UserPasswordEncoderInterface $encoder,
         EntityManagerInterface $entityManager,
@@ -121,12 +121,13 @@ class UserApiController extends AbstractController
 
             $request = $this->transformJsonBody($request);
 
-            if (!$request || !$request->get('username') || !$request->request->get('password')){
+            if (!$request || !$request->get('username') || !$request->request->get('password') || !$request->request->get('email')){
                 throw new \Exception();
             }
 
             $user = new User();
             $user->setUsername($request->get('username'));
+            $user->setEmail($request->request->get('email'));
             $user->setPassword($encoder->encodePassword($user, $request->get('password')));
 
             $entityManager->flush();
@@ -153,7 +154,7 @@ class UserApiController extends AbstractController
      * @return JsonResponse
      * @Route("/users/{id}", name="userss_delete", methods={"DELETE"})
      */
-    public function deleteUser(EntityManagerInterface $entityManager, UserRepository $userRepository, $id): JsonResponse
+    public function deleteApiUser(EntityManagerInterface $entityManager, UserRepository $userRepository, $id): JsonResponse
     {
         $user = $userRepository->find($id);
 
