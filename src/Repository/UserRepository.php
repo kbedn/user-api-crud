@@ -5,27 +5,18 @@ namespace App\Repository;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\ORM\{
-    OptimisticLockException,
-    ORMException}
-;
-use Symfony\Component\Security\Core\{
-    Exception\UnsupportedUserException,
-    User\PasswordUpgraderInterface,
-    User\UserInterface
-};
+use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
+use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @method User|null find($id, $lockMode = null, $lockVersion = null)
  * @method User|null findOneBy(array $criteria, array $orderBy = null)
  * @method User[]    findAll()
- * @method UserInterface    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method User[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
 {
-    /**
-     * @param ManagerRegistry $registry
-     */
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, User::class);
@@ -33,10 +24,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
     /**
      * Used to upgrade (rehash) the user's password automatically over time.
-     * @param UserInterface $user
-     * @param string $newEncodedPassword
-     * @throws ORMException
-     * @throws OptimisticLockException
      */
     public function upgradePassword(UserInterface $user, string $newEncodedPassword): void
     {
@@ -47,14 +34,5 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $user->setPassword($newEncodedPassword);
         $this->_em->persist($user);
         $this->_em->flush();
-    }
-
-    /**
-     * @param string $username
-     * @return User|null
-     */
-    public function loadUserByUsername(string $username): ?User
-    {
-        return $this->findOneBy(['username' => $username]);
     }
 }

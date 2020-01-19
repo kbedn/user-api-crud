@@ -44,13 +44,11 @@ class UserManager
      */
     public function createUserFromArray(array $userData): User
     {
-        var_dump($userData);
-        if (!$userData['username'] || !$userData['password'] || !$userData['email']){
+        if (!$userData['password'] || !$userData['email']){
             throw new \InvalidArgumentException('Not enough data');
         }
 
         $user = new User();
-        $user->setUsername($userData['username']);
         $user->setEmail($userData['email']);
         $this->updatePassword($user, $userData['password']);
 

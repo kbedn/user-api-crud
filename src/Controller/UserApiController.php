@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\{
 };
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\VarDumper\VarDumper;
 
 /**
  * @Route("/api", name="user_api_")
@@ -80,7 +81,7 @@ class UserApiController extends AbstractController
     public function getApiUser(UserRepository $userRepository, $username): JsonResponse
     {
         $user = $userRepository->loadUserByUsername($username);
-
+        VarDumper::dump($this->getUser());die();
         if (!$user){
             $data = [
                 'status' => Response::HTTP_NOT_FOUND,

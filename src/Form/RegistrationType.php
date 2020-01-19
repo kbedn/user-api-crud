@@ -5,7 +5,6 @@ use Symfony\Component\Form\{
     AbstractType,
     Extension\Core\Type\EmailType,
     Extension\Core\Type\RepeatedType,
-    Extension\Core\Type\TextType,
     FormBuilderInterface
 };
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -20,7 +19,6 @@ class RegistrationType extends AbstractType
     {
         $builder
             ->add('email', EmailType::class)
-            ->add('username', TextType::class)
             ->add('password', RepeatedType::class);
     }
 

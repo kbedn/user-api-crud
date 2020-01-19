@@ -3,7 +3,7 @@
 use App\Entity\User;
 use App\Form\RegistrationType;
 use App\Form\UserType;
-use App\Security\LoginAuthenticator;
+use App\Security\AppAuthenticator;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -28,13 +28,13 @@ class RegistrationController extends AbstractController
     }
 
     /**
-     * @param LoginAuthenticator $authenticator
+     * @param AppAuthenticator $authenticator
      * @param GuardAuthenticatorHandler $guardHandler
      * @param Request $request
      * @return RedirectResponse|Response|null
      */
     public function register(
-        LoginAuthenticator $authenticator,
+        AppAuthenticator $authenticator,
         GuardAuthenticatorHandler $guardHandler,
         Request $request
     ) {
