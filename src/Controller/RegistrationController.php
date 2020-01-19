@@ -4,6 +4,8 @@ use App\Entity\User;
 use App\Form\RegistrationType;
 use App\Form\UserType;
 use App\Security\LoginAuthenticator;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,6 +19,9 @@ class RegistrationController extends AbstractController
     /** @var UserManager */
     protected $userManager;
 
+    /**
+     * @param UserManager $userManager
+     */
     public function __construct(UserManager $userManager)
     {
         $this->userManager = $userManager;
@@ -57,6 +62,8 @@ class RegistrationController extends AbstractController
      * @Route("/register", name="register")
      * @param Request $request
      * @return Response
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
     public function renderFormAction(Request $request): Response
     {

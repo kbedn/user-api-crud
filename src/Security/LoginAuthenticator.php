@@ -19,11 +19,13 @@ use Symfony\Component\Security\Core\{
     User\UserInterface,
     User\UserProviderInterface
 };
-use Symfony\Component\Security\Csrf\CsrfToken;
-use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
-use Symfony\Component\Security\Guard\Authenticator\AbstractFormLoginAuthenticator;
-use Symfony\Component\Security\Guard\PasswordAuthenticatedInterface;
-use Symfony\Component\Security\Http\Util\TargetPathTrait;
+use Symfony\Component\Security\{
+    Csrf\CsrfToken,
+    Csrf\CsrfTokenManagerInterface,
+    Guard\Authenticator\AbstractFormLoginAuthenticator,
+    Guard\PasswordAuthenticatedInterface,
+    Http\Util\TargetPathTrait
+};
 
 class LoginAuthenticator extends AbstractFormLoginAuthenticator implements PasswordAuthenticatedInterface
 {
@@ -131,10 +133,6 @@ class LoginAuthenticator extends AbstractFormLoginAuthenticator implements Passw
      */
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey): RedirectResponse
     {
-        if ($targetPath = $this->getTargetPath($request->getSession(), $providerKey)) {
-        return new RedirectResponse($targetPath);
-    }
-
         return new RedirectResponse($this->urlGenerator->generate('homepage'));
     }
 

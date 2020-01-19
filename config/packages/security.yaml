@@ -21,6 +21,7 @@ security:
                 authenticators:
                     - App\Security\LoginAuthenticator
                 entry_point: App\Security\LoginAuthenticator
+
             # http_basic: true
             # https://symfony.com/doc/current/security.html#a-configuring-how-your-users-will-authenticate
 

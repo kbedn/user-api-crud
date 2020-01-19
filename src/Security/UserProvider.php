@@ -5,7 +5,8 @@ use App\Repository\UserRepository;
 use Symfony\Component\Security\Core\{Exception\UnsupportedUserException,
     Exception\UsernameNotFoundException,
     User\UserInterface,
-    User\UserProviderInterface};
+    User\UserProviderInterface
+};
 
 class UserProvider implements UserProviderInterface
 {
