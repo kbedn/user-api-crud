@@ -37,6 +37,11 @@ class User implements UserInterface, \JsonSerializable
      */
     private $password;
 
+    /**
+     * @ORM\Column(type="string", unique=true, nullable=true)
+     */
+    private $apiToken;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -112,6 +117,25 @@ class User implements UserInterface, \JsonSerializable
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getApiToken(): ?string
+    {
+        return $this->apiToken;
+    }
+
+    /**
+     * @param mixed $apiToken
+     * @return User
+     */
+    public function setApiToken($apiToken): self
+    {
+        $this->apiToken = $apiToken;
+
+        return $this;
     }
 
     /**
