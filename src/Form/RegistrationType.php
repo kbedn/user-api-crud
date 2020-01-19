@@ -4,6 +4,7 @@ use App\Entity\User;
 use Symfony\Component\Form\{
     AbstractType,
     Extension\Core\Type\EmailType,
+    Extension\Core\Type\PasswordType,
     Extension\Core\Type\RepeatedType,
     FormBuilderInterface
 };
@@ -19,7 +20,12 @@ class RegistrationType extends AbstractType
     {
         $builder
             ->add('email', EmailType::class)
-            ->add('password', RepeatedType::class);
+            ->add('password', RepeatedType::class, [
+                    'type' => PasswordType::class,
+                    'first_options' => ['label' => 'form.password'],
+                    'second_options' => ['label' => 'form.password_confirmation'],
+                    'invalid_message' => 'form.password_mismatch',
+            ]);
     }
 
     /**
