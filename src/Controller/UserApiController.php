@@ -13,7 +13,6 @@ use Symfony\Component\HttpFoundation\{
 };
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\VarDumper\VarDumper;
 
 /**
  * @Route("/api", name="user_api_")
@@ -46,12 +45,12 @@ class UserApiController extends AbstractController
         try{
             $request = $this->transformJsonBody($request);
 
-            if (!$request || !$request->get('username') || !$request->request->get('password')){
+            if (!$request || !$request->get('email') || !$request->request->get('password')){
                 throw new \InvalidArgumentException();
             }
 
             $user = new User();
-            $user->setUsername($request->get('username'));
+            $user->setEmail($request->get('email'));
             $user->setPassword($encoder->encodePassword($user, $request->get('password')));
 
             $entityManager->persist($user);
@@ -61,6 +60,7 @@ class UserApiController extends AbstractController
                 'status' => 200,
                 'success' => 'User added successfully',
             ];
+
             return $this->response($data);
 
         }catch (\Exception $e){
@@ -80,8 +80,8 @@ class UserApiController extends AbstractController
      */
     public function getApiUser(UserRepository $userRepository, $username): JsonResponse
     {
-        $user = $userRepository->loadUserByUsername($username);
-        VarDumper::dump($this->getUser());die();
+        $user = $userRepository->findOneBy(['email' => $username]);
+
         if (!$user){
             $data = [
                 'status' => Response::HTTP_NOT_FOUND,
@@ -122,12 +122,11 @@ class UserApiController extends AbstractController
 
             $request = $this->transformJsonBody($request);
 
-            if (!$request || !$request->get('username') || !$request->request->get('password') || !$request->request->get('email')){
+            if (!$request || !$request->get('email') || !$request->request->get('password')){
                 throw new \Exception();
             }
 
             $user = new User();
-            $user->setUsername($request->get('username'));
             $user->setEmail($request->request->get('email'));
             $user->setPassword($encoder->encodePassword($user, $request->get('password')));
 
@@ -144,6 +143,7 @@ class UserApiController extends AbstractController
                 'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
                 'errors' => Response::$statusTexts[Response::HTTP_UNPROCESSABLE_ENTITY],
             ];
+
             return $this->response($data, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
     }
@@ -173,6 +173,7 @@ class UserApiController extends AbstractController
             'status' => Response::HTTP_OK,
             'errors' => Response::$statusTexts[Response::HTTP_OK],
         ];
+
         return $this->response($data);
     }
 
